@@ -8,11 +8,15 @@
 #include "../MLX/include/MLX42/MLX42_Int.h"
 
 #define cell_size 64
+#define TEXTURE_WIDTH 64
+#define TEXTURE_HEIGHT 64
 
 void	rotate(t_cub3d *data, int unit_degree);
 void	put_pixel_box(t_cub3d *data, u_int32_t color);
 void	cast_ray(void *param);
 void	draw_wall_slice(t_cub3d *data, int x, double distance_to_wall, int ca, int color);
+
+int	texture[TEXTURE_WIDTH * TEXTURE_HEIGHT];
 
 // Exit the program as failure.
 static void ft_error(void)
@@ -24,6 +28,17 @@ static void ft_error(void)
 float	deg2rad(int a)
 {
 	return (a * M_PI / 180.0);
+}
+
+void	generate_texture(int texture[TEXTURE_WIDTH * TEXTURE_HEIGHT])
+{
+	for (int y = 0; y < TEXTURE_HEIGHT; y++)
+	{
+		for (int x = 0; x < TEXTURE_WIDTH; x++)
+		{
+			texture[y * TEXTURE_WIDTH + x] = 65536 * 254 * (x != y && x != TEXTURE_WIDTH - y);
+		}
+	}
 }
 
 int	wall_collision(t_cub3d *data, int dir)
@@ -61,8 +76,8 @@ int	wall_collision(t_cub3d *data, int dir)
 			cnt++;
 		}
 		// printf("%d\n", cnt);
-		if (cnt <= 1)
-			printf("collision\n");
+		// if (cnt <= 1)
+		// 	printf("collision\n");
 	}
 	
 	return (0);
@@ -354,7 +369,7 @@ void draw_wall_slice(t_cub3d *data, int x, double distance_to_wall, int ca, int 
 	distance_to_wall *= cos(deg2rad(ca));
 	// Calculate wall height
 	int wall_height = (int)(6000 / distance_to_wall);
-	// printf("%d\n", wall_height);
+	double step = 1.0 * TEXTURE_HEIGHT / wall_height;
 	// Calculate start and end of the vertical line
 	int line_top = (HEIGHT / 2) - (wall_height / 2);
 	int line_bottom = (HEIGHT / 2) + (wall_height / 2);
@@ -363,17 +378,24 @@ void draw_wall_slice(t_cub3d *data, int x, double distance_to_wall, int ca, int 
 	if (line_top < 0) line_top = 0;
 	if (line_bottom >= HEIGHT) line_bottom = HEIGHT - 1;
 
+	double texPos = (line_top - HEIGHT / 2 + wall_height / 2) * step;
+	// printf("%d %d\n", line_top, line_bottom);
+	int texX = (int)(x * TEXTURE_WIDTH);
+	// int texY = (int)texPos && (TEXTURE_HEIGHT - 1);	//why %?
 	// Calculate wall color based on distance (e.g., darker for farther walls)
 	// int color = calculate_color(distance_to_wall);
 
 	// Draw the vertical line one pixel at a time
 	for (int y = line_top; y <= line_bottom; y++) {
+		// int texY = (int)texPos && (TEXTURE_HEIGHT - 1);	//why %?
+		int texY = (int)texPos;	//why %?
+		texPos += step;
 		for (int j = 0; j < 8; j++)
 		{
 			if (color == 0)
-				mlx_put_pixel(data->img2, 8 * x + j, y, 0x00FF00FF * 0.8); // Draw a single pixel
+				mlx_put_pixel(data->img2, 8 * x + j, y, texture[TEXTURE_WIDTH * texY + texX] * 0.8); // Draw a single pixel
 			else
-				mlx_put_pixel(data->img2, 8 * x + j, y, 0x00FF00FF); // Draw a single pixel
+				mlx_put_pixel(data->img2, 8 * x + j, y, texture[TEXTURE_WIDTH * texY + texX]); // Draw a single pixel
 		}
 	}
 }
@@ -444,64 +466,3 @@ int32_t	main(int ac, char *av[])
 		printf("Invalid input.\n./cub3D [MAP.cub]\n");
 	return (EXIT_SUCCESS);
 }
-
-
-
-// void cast_ray(void *param) {
-// 	t_cub3d *data = param;
-// 	float angle = data->pos.angle;
-// 	angle = angle * (180/M_PI);
-// 	// float cell_size = 1395/8;
-// 	int	map_width = data->map.map_width;
-// 	float pixel_player_x = data->pos.x;
-// 	float pixel_player_y = data->pos.y;
-
-// 	float dx = cos(angle);
-// 	float dy = sin(angle);
-
-// 	// Vertical intersection
-// 	// float vertX = floor(pixel_player_x / cell_size) * cell_size + (dx > 0 ? cell_size : 0);
-// 	// float vertY = pixel_player_y + (vertX - pixel_player_x) * tan(angle);
-
-
-// 	// Skip vertical check if looking straight up/down
-// 	if (dx > 0.001) {
-// 		float vertX = floor(pixel_player_x / cell_size) * cell_size + (dx > 0 ? cell_size : 0);
-// 		float vertY = pixel_player_y + (vertX - pixel_player_x) * tan(angle);
-
-// 		while (true) {
-// 			int grid_x = (int)(vertX / cell_size);
-// 			int grid_y = (int)(vertY / cell_size);
-
-// 			if (grid_x >= 0 && grid_y >= 0 && grid_x < map_width && grid_y < map_width &&
-// 				data->map.map_data[grid_y * map_width + grid_x] == 1) {
-// 				printf("Vertical hit at (%f, %f)\n", vertX, vertY);
-// 				break;
-// 			}
-
-// 			vertX += (dx > 0 ? cell_size : -cell_size);
-// 			vertY += (dx > 0 ? cell_size : -cell_size) * tan(angle);
-// 		}
-// 	}
-
-
-// 	// Skip horizontal check if looking straight left/right
-// 	if (dy != 0) {
-// 		float horY = floor(pixel_player_y / cell_size) * cell_size + (dy > 0 ? cell_size : 0);
-// 		float horX = pixel_player_x + (horY - pixel_player_y) / tan(angle);
-
-// 		while (true) {
-// 			int grid_x = (int)(horX / cell_size);
-// 			int grid_y = (int)(horY / cell_size);
-
-// 			if (grid_x >= 0 && grid_y >= 0 && grid_x < map_width && grid_y < map_width &&
-// 				data->map.map_data[grid_y * map_width + grid_x] == 1) {
-// 				printf("Horizontal hit at (%f, %f)\n", horX, horY);
-// 				break;
-// 			}
-
-// 			horY += (dy > 0 ? cell_size : -cell_size);
-// 			horX += (dy > 0 ? cell_size : -cell_size) / tan(angle);
-// 		}
-// 	}
-// }
