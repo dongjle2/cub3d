@@ -30,15 +30,15 @@ float	deg2rad(int a)
 	return (a * M_PI / 180.0);
 }
 
-void	generate_texture(int texture[TEXTURE_WIDTH * TEXTURE_HEIGHT])
-{
-	for (int y = 0; y < TEXTURE_HEIGHT; y++)
-	{
-		for (int x = 0; x < TEXTURE_WIDTH; x++)
-		{
-			texture[y * TEXTURE_WIDTH + x] = 65536 * 254 * (x != y && x != TEXTURE_WIDTH - y);
-		}
-	}
+void generate_texture(uint32_t *texture) {
+    // Define the color for the brown brick (e.g., RGBA: 139, 69, 19, 255)
+    uint32_t brown_brick_color = 0x8B4513FF; // Brown color with full opacity
+
+    for (int y = 0; y < TEXTURE_HEIGHT; y++) {
+        for (int x = 0; x < TEXTURE_WIDTH; x++) {
+            texture[y * TEXTURE_WIDTH + x] = brown_brick_color;
+        }
+    }
 }
 
 int	wall_collision(t_cub3d *data, int dir)
@@ -64,7 +64,7 @@ int	wall_collision(t_cub3d *data, int dir)
 	// int ipy_sub_yo = (data->pos.y - y_offset) / data->map.scale_factor_y;
 	if (dir == 1)	//W
 	{
-		printf("%u, %u, %f, %f\n", data->pos.x, data->pos.y, data->pos.dx, data->pos.dy);
+		// printf("%u, %u, %f, %f\n", data->pos.x, data->pos.y, data->pos.dx, data->pos.dy);
 		if (data->map.map_data[ipy][ipx_add_xo] == '0')
 		{
 			data->pos.x += data->pos.dx * 4;
@@ -390,12 +390,14 @@ void draw_wall_slice(t_cub3d *data, int x, double distance_to_wall, int ca, int 
 		// int texY = (int)texPos && (TEXTURE_HEIGHT - 1);	//why %?
 		int texY = (int)texPos;	//why %?
 		texPos += step;
+		printf("%d %d\n", texX, texY);
+		printf("%d\n", texture[TEXTURE_HEIGHT * texY + texX]);
 		for (int j = 0; j < 8; j++)
 		{
 			if (color == 0)
-				mlx_put_pixel(data->img2, 8 * x + j, y, texture[TEXTURE_WIDTH * texY + texX] * 0.8); // Draw a single pixel
+				mlx_put_pixel(data->img2, 8 * x + j, y, texture[TEXTURE_HEIGHT * texY + texX] * 0.8); // Draw a single pixel
 			else
-				mlx_put_pixel(data->img2, 8 * x + j, y, texture[TEXTURE_WIDTH * texY + texX]); // Draw a single pixel
+				mlx_put_pixel(data->img2, 8 * x + j, y, texture[TEXTURE_HEIGHT * texY + texX]); // Draw a single pixel
 		}
 	}
 }
