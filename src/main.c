@@ -7,56 +7,12 @@
 #include "../MLX/include/MLX42/MLX42.h"
 #include "../MLX/include/MLX42/MLX42_Int.h"
 
-#define cell_size 64
-#define TEXTURE_WIDTH 32
-#define TEXTURE_HEIGHT 32
-
-int All_Textures[]=               //all 32x32 textures
-{
- //Checkerboard
- 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1,
- 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1,
- 0,0,0,0,0,1,1,0, 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1,
- 0,0,1,1,1,1,1,0, 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1,
- 0,0,1,1,1,1,1,0, 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1,
- 0,0,0,0,0,1,1,0, 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1,
- 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1,
- 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1,
-
- 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 
- 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 
- 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 
- 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 
- 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 
- 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 
- 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 
- 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0,
-
- 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1,
- 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1,
- 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1,
- 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1,
- 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1,
- 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1,
- 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1,
- 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1,
-
- 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 
- 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 
- 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 
- 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 
- 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 
- 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 
- 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 
- 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 
-};
+#define cell_size 32
 
 void	rotate(t_cub3d *data, int unit_degree);
 void	put_pixel_box(t_cub3d *data, u_int32_t color);
 void	cast_ray(void *param);
-void draw_wall_slice(t_cub3d *data, int x, double distance_to_wall, int ca, int color, int rx, int ry);
-
-int	texture[TEXTURE_WIDTH * TEXTURE_HEIGHT];
+void	draw_wall_slice(t_cub3d *data, int x, double distance_to_wall, int ca, int color, int rx, int ry);
 
 // Exit the program as failure.
 static void ft_error(void)
@@ -70,15 +26,9 @@ float	deg2rad(int a)
 	return (a * M_PI / 180.0);
 }
 
-void generate_texture(uint32_t *texture) {
-    // Define the color for the brown brick (e.g., RGBA: 139, 69, 19, 255)
-    uint32_t brown_brick_color = 0x8B4513FF; // Brown color with full opacity
-
-    for (int y = 0; y < TEXTURE_HEIGHT; y++) {
-        for (int x = 0; x < TEXTURE_WIDTH; x++) {
-            texture[y * TEXTURE_WIDTH + x] = brown_brick_color;
-        }
-    }
+float rad2deg(float rad) 
+{
+    return rad * (180.0 / M_PI);
 }
 
 int	wall_collision(t_cub3d *data, int dir)
@@ -96,28 +46,31 @@ int	wall_collision(t_cub3d *data, int dir)
 		y_offset = 10;
 	else
 		y_offset = -10;
-	int ipx = data->pos.x / data->map.scale_factor_x;
-	int ipy = data->pos.y / data->map.scale_factor_y;
-	int ipx_add_xo = (data->pos.x + x_offset) / data->map.scale_factor_x;
-	int ipy_add_yo = (data->pos.y + y_offset) / data->map.scale_factor_y;
+		
+	int ipx = data->pos.x / data->map.pw;
+	int ipy = data->pos.y / data->map.ph;
+	int ipx_add_xo = (data->pos.x + x_offset) / data->map.pw;
+	int ipy_add_yo = (data->pos.y + y_offset) / data->map.ph;
 	// int ipx_sub_xo = (data->pos.x - x_offset) / data->map.scale_factor_x;
 	// int ipy_sub_yo = (data->pos.y - y_offset) / data->map.scale_factor_y;
 	if (dir == 1)	//W
 	{
-		// printf("%u, %u, %f, %f\n", data->pos.x, data->pos.y, data->pos.dx, data->pos.dy);
-		if (data->map.map_data[ipy][ipx_add_xo] == '0')
+		printf("%u, %u, %f, %f\n", data->pos.x, data->pos.y, data->pos.dx, data->pos.dy);
+		char c = data->map.map_data[ipy][ipx_add_xo];
+		if (c == '0' || ft_strchr("NSWE", c))
 		{
 			data->pos.x += data->pos.dx * 4;
 			cnt++;
 		}
-		if (data->map.map_data[ipy_add_yo][ipx] == '0')
+		char a = data->map.map_data[ipy_add_yo][ipx];
+		if (a == '0' || ft_strchr("NSWE", a))
 		{
 			data->pos.y += data->pos.dy * 4;
 			cnt++;
 		}
 		// printf("%d\n", cnt);
-		// if (cnt <= 1)
-		// 	printf("collision\n");
+		if (cnt <= 1)
+			printf("collision\n");
 	}
 	
 	return (0);
@@ -125,9 +78,9 @@ int	wall_collision(t_cub3d *data, int dir)
 
 void move_forward(t_cub3d *data, int dir)
 {
+	data->pos.angle = rad2deg(atan2(-data->pos.dy, data->pos.dx));
 	if (wall_collision(data, dir))
 	{
-
 		return ;
 	}
 	//speed is 4
@@ -198,6 +151,7 @@ int	adjust_angle(int angle)
 
 void rotate(t_cub3d *data, int unit_degree)
 {
+	data->pos.angle = rad2deg(atan2(-data->pos.dy, data->pos.dx));
 	data->pos.angle += unit_degree;
 	data->pos.angle = adjust_angle(data->pos.angle);
 	data->pos.dx = cos(deg2rad(data->pos.angle));
@@ -206,6 +160,8 @@ void rotate(t_cub3d *data, int unit_degree)
 
 void	put_pixel_box(t_cub3d *data, u_int32_t color)
 {
+	// int scale_factor_x = data->img->width / data->map.map_width;
+    // int scale_factor_y = data->img->height / data->map.map_height;
 	const int x_margin[7] = {-3, -2, -1, 0 ,1, 2, 3};
 	const int y_margin[7] = {-3, -2, -1, 0 ,1, 2, 3};
 	size_t	i;
@@ -231,32 +187,31 @@ void	put_pixel_box(t_cub3d *data, u_int32_t color)
 	}
 }
 
-void render_map(char **map, int map_width, int map_height, int img_width, int img_height, t_cub3d *data) {
-	int scale_factor_x = img_width / map_width;
-	int scale_factor_y = img_height / map_height;
-	int color;
+void render_map(char **map, t_cub3d *data) {
+    int scale_factor_x = data->img->width / data->map.map_width;
+    int scale_factor_y = data->img->height / data->map.map_height;
+    int color;
 
-	for (int i = 0; i < map_height; i++) {
-		for (int j = 0; j < map_width; j++) {
-			if (map[i][j] == '1')
-				color = 0xFF0000FF; // Wall: Blue
-			else if (map[i][j] == '0')
-				color = 0xFFFFFFFF; // Space: White
-			else
-				color = 0x00000000; // Default: Black (or transparent)
+    for (int i = 0; map[i] != NULL; i++) {
+        for (int j = 0; map[i][j] != '\0'; j++) {
+            if (map[i][j] == '1')
+                color = 0xFF0000FF; // Wall: Blue
+            else if (map[i][j] == '0' || ft_strchr("NSEW", map[i][j]))
+                color = 0xFFFFFFFF; // Space: White
+            else
+                color = 0x00000000; // Default: Black (or transparent)
+            int x_start = j * scale_factor_y + 1;
+            int y_start = i * scale_factor_x + 1;
+            int x_end = x_start + scale_factor_x - 1;
+            int y_end = y_start + scale_factor_y - 1;
 
-			int x_start = j * scale_factor_x + 1;
-			int y_start = i * scale_factor_y + 1;
-			int x_end = x_start + scale_factor_x - 1;
-			int y_end = y_start + scale_factor_y - 1;
-
-			for (int y = y_start; y < y_end; y++) {
-				for (int x = x_start; x < x_end; x++) {
-					mlx_put_pixel(data->img, x, y, color);
-				}
-			}
-		}
-	}
+            for (int y = y_start; y < y_end; y++) {
+                for (int x = x_start; x < x_end; x++) {
+                    mlx_put_pixel(data->img, x, y, color);
+                }
+            }
+        }
+    }
 }
 
 
@@ -301,7 +256,7 @@ void cast_ray(void *param) {
 	int dof, mx, my;
 	int	color;
 
-	render_map(data->map.map_data, data->map.map_width, data->map.map_height, 512, 512, data);
+	// render_map(data->map.map_data, data->map.map_width, data->map.map_height, 512, 512, data);
 	float ra = adjust_angle(angle + 30);
 	int i = 0;
 	while (i++ < 60)
@@ -406,6 +361,11 @@ void cast_ray(void *param) {
 }
 
 void draw_wall_slice(t_cub3d *data, int x, double distance_to_wall, int ca, int color, int rx, int ry) {
+	mlx_texture_t* texture = mlx_load_png("./images/EA.png");
+
+	int TEXTURE_HEIGHT = texture->height;
+	int TEXTURE_WIDTH = texture->width;
+
     distance_to_wall *= cos(deg2rad(ca));
     int wall_height = (int)(6000 / distance_to_wall);
     double step = 1.0 * TEXTURE_HEIGHT / wall_height;
@@ -414,9 +374,12 @@ void draw_wall_slice(t_cub3d *data, int x, double distance_to_wall, int ca, int 
 
     if (line_top < 0) line_top = 0;
     if (line_bottom >= HEIGHT) line_bottom = HEIGHT - 1;
-
+    uint32_t ceiling_color = 0xFFC8C8C8;
+    uint32_t floor_color = 0xFF8B8B8B;
     double texPos = (line_top - HEIGHT / 2 + wall_height / 2) * step;
-    
+
+
+
     // Calculate texture X based on where the ray hit the wall
     int texX;
     if (color == 0) { // horizontal hit
@@ -428,7 +391,7 @@ void draw_wall_slice(t_cub3d *data, int x, double distance_to_wall, int ca, int 
 	for (int y = line_top; y <= line_bottom; y++) {
         int texY = ((int)texPos) % TEXTURE_HEIGHT;
         if (texX >= 0 && texX < TEXTURE_WIDTH && texY >= 0 && texY < TEXTURE_HEIGHT) {
-            int texel = All_Textures[TEXTURE_HEIGHT * texY + texX];
+            int texel = texture->pixels[TEXTURE_HEIGHT * texY + texX];
             uint32_t pixel_color = texel ? 0xFFFFFFFF : 0x444444FF;
             
             if (color == 0) {
@@ -446,71 +409,152 @@ void draw_wall_slice(t_cub3d *data, int x, double distance_to_wall, int ca, int 
         }
         texPos += step;
     }
+	// Draw ceiling
+    for (int y = 1; y < line_top; y++) 
+	{
+		for (int j = -1; j < data->map.map_width; ++j)
+		{
+    	    mlx_put_pixel(data->img2, data->map.map_width * x + j, y, ceiling_color);
+		}
+    }
+    // Draw floor
+    for (int y = line_bottom; y < HEIGHT; y++) 
+	{
+        for (int j = -1; j < data->map.map_width; ++j)
+		{
+    	    mlx_put_pixel(data->img2, data->map.map_width * x + j, y, floor_color);
+		}
+    }
 }
+
+// void draw_wall_slice(t_cub3d *data, int x, double distance_to_wall, int ca, int color) 
+// {    
+// 	if (!data->img2) {
+// 		printf("Error: img2 is NULL\n");
+// 		return;
+// 	}
+//     // Correct distance for fish-eye effect
+//     distance_to_wall *= cos(deg2rad(ca));
+//     // Calculate wall height
+//     int wall_height = (int)(17000 / distance_to_wall);
+//     // Determine wall slice bounds
+//     int line_top = (HEIGHT / 2) - (wall_height / 2);
+//     int line_bottom = (HEIGHT / 2) + (wall_height / 2);
+//     // Clip bounds to screen
+//     if (line_top < 0) line_top = 0;
+//     if (line_bottom >= HEIGHT) line_bottom = HEIGHT - 1;
+//     // Define colors for the ceiling and floor
+//     uint32_t ceiling_color = 0xFFC8C8C8;
+//     uint32_t floor_color = 0xFF8B8B8B;
+//     uint32_t wall_color = (color == 0) ? 0x00FF00FF * 0.6 : 0x00FF00FF; // Red or green wall
+//     // Draw wall
+//     for (int y = line_top; y <= line_bottom; y++) 
+// 	{
+//         for (int j = -1; j < data->map.map_width; ++j)
+// 		{
+//     	    mlx_put_pixel(data->img2, data->map.map_width * x + j, y, wall_color);
+// 		}
+//     }
+//     // Draw ceiling
+//     for (int y = 1; y < line_top; y++) 
+// 	{
+// 		for (int j = -1; j < data->map.map_width; ++j)
+// 		{
+//     	    mlx_put_pixel(data->img2, data->map.map_width * x + j, y, ceiling_color);
+// 		}
+//     }
+//     // Draw floor
+//     for (int y = line_bottom; y < HEIGHT; y++) 
+// 	{
+//         for (int j = -1; j < data->map.map_width; ++j)
+// 		{
+//     	    mlx_put_pixel(data->img2, data->map.map_width * x + j, y, floor_color);
+// 		}
+//     }
+// }
+
+// void draw_wall_slice(t_cub3d *data, int x, double distance_to_wall, int ca, int color) {
+// 	distance_to_wall *= cos(deg2rad(ca));
+// 	// Calculate wall height
+// 	int wall_height = (int)(17000 / distance_to_wall);
+// 	// printf("%d\n", wall_height);
+// 	// Calculate start and end of the vertical line
+// 	int line_top = (HEIGHT / 2) - (wall_height / 2);
+// 	int line_bottom = (HEIGHT / 2) + (wall_height / 2);
+
+// 	// int ceiling = HEIGHT - line_top;
+
+// 	// Clip to screen bounds
+// 	if (line_top < 0) line_top = 0;
+// 	if (line_bottom >= HEIGHT) line_bottom = HEIGHT - 1;
+
+// 	// Calculate wall color based on distance (e.g., darker for farther walls)
+// 	// int color = calculate_color(distance_to_wall);
+
+// 	// Draw the vertical line one pixel at a time
+// 	for (int y = line_top; y <= line_bottom; y++) {
+// 		for (int j = -1; j < data->map.map_width; ++j)
+// 		{
+// 			if (!data->img2) {
+// 				printf("Error: img2 is NULL\n");
+// 				return;
+// 			}
+// 			if (color == 0)
+// 				mlx_put_pixel(data->img2, data->map.map_width * x + j, y, 0x00FF00FF * 0.6); // Draw a single pixel
+// 			else
+// 				mlx_put_pixel(data->img2, data->map.map_width * x + j, y, 0x00FF00FF); // Draw a single pixel
+// 		}
+// 	}
+// 	for (int floor_y = line_bottom + 1; floor_y < HEIGHT; floor_y++) 
+// 	{
+// 		for (int j = 0; j < data->map.map_width; j++)
+// 		{
+// 			mlx_put_pixel(data->img2, data->map.map_width * x + j, floor_y, 0xFFB9B9B9); // Grey color
+// 		}
+//     }
+// }
 
 int32_t	main(int ac, char *av[])
 {
 	char *path;
 	t_cub3d	data;
-	// int map_input[] = {1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,1,1,0,1,0,0,0,0,1,1,0,1,0,0,0,0,1,1,0,0,0,0,0,0,1,1,0,0,0,0,1,0,1,1,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1};
-	char *map_input[] = {
-	" 1111111",
-	" 1010001",
-	"10010101",
-	"10000111",
-	"10000001",
-	"1010001",
-	"10111001",
-	"11  1111"
-	};//		   |
-	//init_fuction V
-	data.map.map_data = malloc(sizeof(map_input));
-	ft_memcpy(data.map.map_data, map_input, sizeof(map_input));
-	data.map.map_width = 8;
-	data.map.map_height = 8;
-	data.map.scale_factor_x = 512 / 8;
-	data.map.scale_factor_y = 512 / 8;
-	data.pos.x = 300;
-	data.pos.y = 300;
-	data.pos.dx = 1;
-	data.pos.dy = 0;
-	data.pos.angle = 0;
 
 	if (ac == 2)
 	{
 		path = av[1];
-		if (parsed_map(path, data.map))
+		map_initialising(&data.map);
+		if (parsed_map(path, &data))
 		{
+			printf("Width = %i, Height = %i\n", data.map.map_width, data.map.map_height);
 			// MLX allows you to define its core behaviour before startup.
 			// mlx_set_setting(MLX_MAXIMIZED, true);
 			data.mlx = mlx_init(WIDTH, HEIGHT, "42Balls", true);
 			if (!data.mlx)
 				ft_error();
-
 			/* Do stuff */
 			// Create and display the image.
-			data.img = mlx_new_image(data.mlx, 512, 512);
+			cub3d_initialising(&data);
+			data.img = mlx_new_image(data.mlx, data.iwidth, data.iheight);
 			if (!data.img || (mlx_image_to_window(data.mlx, data.img, 0, 0) < 0))
 				ft_error();
-			data.img2 = mlx_new_image(data.mlx, 512, 512);
-			if (!data.img2 || (mlx_image_to_window(data.mlx, data.img2, 515, 0) < 0))
+			data.img2 = mlx_new_image(data.mlx, 912, 612);
+			if (!data.img2 || (mlx_image_to_window(data.mlx, data.img2, data.map.map_width*cell_size, 0) < 0))
 				ft_error();
-
 			// Even after the image is being displayed, we can still modify the buffer.
-			render_map(data.map.map_data, 8, 8, 512, 512, &data);
+			render_map(data.map.map_data, &data);
 			put_pixel_box(&data, 0xF000000F);
-
 			// Register a hook and pass mlx as an optional param.
 			// NOTE: Do this before calling mlx_loop!
 			// mlx_loop_hook(data.mlx, ft_hook, &data);
 			mlx_key_hook(data.mlx, &my_keyhook, &data);
 			mlx_loop(data.mlx);
 			mlx_terminate(data.mlx);
+			ft_free_map(data.map);
 		}
 		else
-			printf("Invalid MAP.\n");
+			return (EXIT_SUCCESS);
 	}
 	else
-		printf("Invalid input.\n./cub3D [MAP.cub]\n");
+		printf("Error: Invalid input!\n./cub3D [MAP.cub]\n");
 	return (EXIT_SUCCESS);
 }
