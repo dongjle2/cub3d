@@ -8,13 +8,53 @@
 #include "../MLX/include/MLX42/MLX42_Int.h"
 
 #define cell_size 64
-#define TEXTURE_WIDTH 64
-#define TEXTURE_HEIGHT 64
+#define TEXTURE_WIDTH 32
+#define TEXTURE_HEIGHT 32
+
+int All_Textures[]=               //all 32x32 textures
+{
+ //Checkerboard
+ 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1,
+ 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1,
+ 0,0,0,0,0,1,1,0, 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1,
+ 0,0,1,1,1,1,1,0, 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1,
+ 0,0,1,1,1,1,1,0, 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1,
+ 0,0,0,0,0,1,1,0, 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1,
+ 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1,
+ 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1,
+
+ 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 
+ 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 
+ 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 
+ 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 
+ 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 
+ 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 
+ 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 
+ 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0,
+
+ 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1,
+ 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1,
+ 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1,
+ 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1,
+ 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1,
+ 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1,
+ 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1,
+ 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1,
+
+ 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 
+ 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 
+ 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 
+ 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 
+ 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 
+ 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 
+ 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 
+ 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 
+};
 
 void	rotate(t_cub3d *data, int unit_degree);
 void	put_pixel_box(t_cub3d *data, u_int32_t color);
 void	cast_ray(void *param);
-void	draw_wall_slice(t_cub3d *data, int x, double distance_to_wall, int ca, int color);
+void draw_wall_slice(t_cub3d *data, int x, double distance_to_wall, int ca, int color, int rx, int ry);
 
 int	texture[TEXTURE_WIDTH * TEXTURE_HEIGHT];
 
@@ -359,47 +399,53 @@ void cast_ray(void *param) {
 		// Draw the ray line from player position to hit point
 		// float ray_length = sqrt(pow(rx - px, 2) + pow(ry - py, 2));
 		draw_line(data, px, py, ra, disT, 0x00FF00FF);
-		draw_wall_slice(data, i, disT, adjust_angle(angle-ra), color);
+		draw_wall_slice(data, i, disT, adjust_angle(angle-ra), color, rx, ry);
 		// draw_wall_slice(data, i, disT, adjust_angle(ra - angle));
 		ra = adjust_angle(ra - 1);
 	}
 }
 
-void draw_wall_slice(t_cub3d *data, int x, double distance_to_wall, int ca, int color) {
-	distance_to_wall *= cos(deg2rad(ca));
-	// Calculate wall height
-	int wall_height = (int)(6000 / distance_to_wall);
-	double step = 1.0 * TEXTURE_HEIGHT / wall_height;
-	// Calculate start and end of the vertical line
-	int line_top = (HEIGHT / 2) - (wall_height / 2);
-	int line_bottom = (HEIGHT / 2) + (wall_height / 2);
+void draw_wall_slice(t_cub3d *data, int x, double distance_to_wall, int ca, int color, int rx, int ry) {
+    distance_to_wall *= cos(deg2rad(ca));
+    int wall_height = (int)(6000 / distance_to_wall);
+    double step = 1.0 * TEXTURE_HEIGHT / wall_height;
+    int line_top = (HEIGHT / 2) - (wall_height / 2);
+    int line_bottom = (HEIGHT / 2) + (wall_height / 2);
 
-	// Clip to screen bounds
-	if (line_top < 0) line_top = 0;
-	if (line_bottom >= HEIGHT) line_bottom = HEIGHT - 1;
+    if (line_top < 0) line_top = 0;
+    if (line_bottom >= HEIGHT) line_bottom = HEIGHT - 1;
 
-	double texPos = (line_top - HEIGHT / 2 + wall_height / 2) * step;
-	// printf("%d %d\n", line_top, line_bottom);
-	int texX = (int)(x * TEXTURE_WIDTH);
-	// int texY = (int)texPos && (TEXTURE_HEIGHT - 1);	//why %?
-	// Calculate wall color based on distance (e.g., darker for farther walls)
-	// int color = calculate_color(distance_to_wall);
+    double texPos = (line_top - HEIGHT / 2 + wall_height / 2) * step;
+    
+    // Calculate texture X based on where the ray hit the wall
+    int texX;
+    if (color == 0) { // horizontal hit
+        texX = (int)(rx * TEXTURE_WIDTH / cell_size) % TEXTURE_WIDTH;
+    } else { // vertical hit
+        texX = (int)(ry * TEXTURE_WIDTH / cell_size) % TEXTURE_WIDTH;
+    }
 
-	// Draw the vertical line one pixel at a time
 	for (int y = line_top; y <= line_bottom; y++) {
-		// int texY = (int)texPos && (TEXTURE_HEIGHT - 1);	//why %?
-		int texY = (int)texPos;	//why %?
-		texPos += step;
-		printf("%d %d\n", texX, texY);
-		printf("%d\n", texture[TEXTURE_HEIGHT * texY + texX]);
-		for (int j = 0; j < 8; j++)
-		{
-			if (color == 0)
-				mlx_put_pixel(data->img2, 8 * x + j, y, texture[TEXTURE_HEIGHT * texY + texX] * 0.8); // Draw a single pixel
-			else
-				mlx_put_pixel(data->img2, 8 * x + j, y, texture[TEXTURE_HEIGHT * texY + texX]); // Draw a single pixel
-		}
-	}
+        int texY = ((int)texPos) % TEXTURE_HEIGHT;
+        if (texX >= 0 && texX < TEXTURE_WIDTH && texY >= 0 && texY < TEXTURE_HEIGHT) {
+            int texel = All_Textures[TEXTURE_HEIGHT * texY + texX];
+            uint32_t pixel_color = texel ? 0xFFFFFFFF : 0x444444FF;
+            
+            if (color == 0) {
+                // Properly handle the color multiplication
+                uint32_t r = ((pixel_color >> 24) & 0xFF) * 0.8;
+                uint32_t g = ((pixel_color >> 16) & 0xFF) * 0.8;
+                uint32_t b = ((pixel_color >> 8) & 0xFF) * 0.8;
+                uint32_t a = pixel_color & 0xFF;
+                pixel_color = (r << 24) | (g << 16) | (b << 8) | a;
+            }
+            
+            for (int j = 0; j < 8; j++) {
+                mlx_put_pixel(data->img2, 8 * x + j, y, pixel_color);
+            }
+        }
+        texPos += step;
+    }
 }
 
 int32_t	main(int ac, char *av[])
