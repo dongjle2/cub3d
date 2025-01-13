@@ -7,7 +7,7 @@
 #include "../MLX/include/MLX42/MLX42.h"
 #include "../MLX/include/MLX42/MLX42_Int.h"
 
-#define cell_size 32
+// #define cell_size 8
 
 void	rotate(t_cub3d *data, int unit_degree);
 void	put_pixel_box(t_cub3d *data, u_int32_t color);
@@ -231,20 +231,25 @@ void draw_line(t_cub3d *data, float start_x, float start_y, float angle, float l
 	int err = (dx > dy ? dx : -dy) / 2;
 	int e2;
 
-	while (1) {
-		mlx_put_pixel(data->img, x1, y1, color);
-		if (x1 == x2 && y1 == y2)
-			break;
-		e2 = err;
-		if (e2 > -dx) {
-			err -= dy;
-			x1 += sx;
-		}
-		if (e2 < dy) {
-			err += dx;
-			y1 += sy;
-		}
-	}
+	 while (1) {
+        // Boundary check to prevent invalid memory access
+        if (x1 >= 0 && x1 < (int)data->img->width && y1 >= 0 && y1 < (int)data->img->height) {
+            mlx_put_pixel(data->img, x1, y1, color);
+        }
+
+        if (x1 == x2 && y1 == y2)
+            break;
+
+        e2 = err;
+        if (e2 > -dx) {
+            err -= dy;
+            x1 += sx;
+        }
+        if (e2 < dy) {
+            err += dx;
+            y1 += sy;
+        }
+    }
 }
 
 void cast_ray(void *param) {
@@ -257,13 +262,13 @@ void cast_ray(void *param) {
 	int	color;
 
 	render_map(data->map.map_data, data);
-	float ra = adjust_angle(angle + 45);
+	float ra = adjust_angle(angle + 30);
 	// angle = adjust_angle(angle + 30);
 	int i = 0;
-	while (i++ < 100)
+	while (i++ < 60)
 	{
-		disV = 100000;
-		disH = 100000;
+		disV = 50000;
+		disH = 50000;
 		// Vertical
 		dof = 0;
 		float tan_ra = tan(deg2rad(ra));
@@ -370,7 +375,7 @@ void draw_wall_slice(t_cub3d *data, int x, double distance_to_wall, int ca, int 
     // Correct distance for fish-eye effect
     distance_to_wall *= cos(deg2rad(ca));
     // Calculate wall height
-    int wall_height = (int)(17000 / distance_to_wall);
+    int wall_height = (int)(15000 / distance_to_wall);
     // Determine wall slice bounds
     int line_top = (HEIGHT / 2) - (wall_height / 2);
     int line_bottom = (HEIGHT / 2) + (wall_height / 2);
@@ -378,75 +383,34 @@ void draw_wall_slice(t_cub3d *data, int x, double distance_to_wall, int ca, int 
     if (line_top < 0) line_top = 0;
     if (line_bottom >= HEIGHT) line_bottom = HEIGHT - 1;
     // Define colors for the ceiling and floor
-    uint32_t ceiling_color = 0xFFC8C8C8;
-    uint32_t floor_color = 0xFF8B8B8B;
+    uint32_t ceiling_color = get_rgba(data->map.ceiling[0],data->map.ceiling[1], data->map.ceiling[2], 255);
+    uint32_t floor_color = get_rgba(data->map.floor[0],data->map.floor[1], data->map.floor[2], 80);
     uint32_t wall_color = (color == 0) ? 0x00FF00FF * 0.6 : 0x00FF00FF; // Red or green wall
     // Draw wall
-    for (int y = line_top; y <= line_bottom; y++) 
+	for (int y = line_top; y <= line_bottom; y++) 
 	{
-        for (int j = -1; j < data->map.map_width; ++j)
+		for (int j = 0; j < 12; j++)
 		{
-    	    mlx_put_pixel(data->img2, data->map.map_width * x + j, y, wall_color);
+			mlx_put_pixel(data->img2, 12 * x + j, y, wall_color);
 		}
     }
     // Draw ceiling
     for (int y = 1; y < line_top; y++) 
 	{
-		for (int j = -1; j < data->map.map_width; ++j)
+		for (int j = -1; j < 12; ++j)
 		{
-    	    mlx_put_pixel(data->img2, data->map.map_width * x + j, y, ceiling_color);
+    	    mlx_put_pixel(data->img2, 12 * x + j, y, ceiling_color);
 		}
     }
     // Draw floor
     for (int y = line_bottom; y < HEIGHT; y++) 
 	{
-        for (int j = -1; j < data->map.map_width; ++j)
+        for (int j = -1; j < 12; ++j)
 		{
-    	    mlx_put_pixel(data->img2, data->map.map_width * x + j, y, floor_color);
+    	    mlx_put_pixel(data->img2, 12 * x + j, y, floor_color);
 		}
     }
 }
-
-// void draw_wall_slice(t_cub3d *data, int x, double distance_to_wall, int ca, int color) {
-// 	distance_to_wall *= cos(deg2rad(ca));
-// 	// Calculate wall height
-// 	int wall_height = (int)(17000 / distance_to_wall);
-// 	// printf("%d\n", wall_height);
-// 	// Calculate start and end of the vertical line
-// 	int line_top = (HEIGHT / 2) - (wall_height / 2);
-// 	int line_bottom = (HEIGHT / 2) + (wall_height / 2);
-
-// 	// int ceiling = HEIGHT - line_top;
-
-// 	// Clip to screen bounds
-// 	if (line_top < 0) line_top = 0;
-// 	if (line_bottom >= HEIGHT) line_bottom = HEIGHT - 1;
-
-// 	// Calculate wall color based on distance (e.g., darker for farther walls)
-// 	// int color = calculate_color(distance_to_wall);
-
-// 	// Draw the vertical line one pixel at a time
-// 	for (int y = line_top; y <= line_bottom; y++) {
-// 		for (int j = -1; j < data->map.map_width; ++j)
-// 		{
-// 			if (!data->img2) {
-// 				printf("Error: img2 is NULL\n");
-// 				return;
-// 			}
-// 			if (color == 0)
-// 				mlx_put_pixel(data->img2, data->map.map_width * x + j, y, 0x00FF00FF * 0.6); // Draw a single pixel
-// 			else
-// 				mlx_put_pixel(data->img2, data->map.map_width * x + j, y, 0x00FF00FF); // Draw a single pixel
-// 		}
-// 	}
-// 	for (int floor_y = line_bottom + 1; floor_y < HEIGHT; floor_y++) 
-// 	{
-// 		for (int j = 0; j < data->map.map_width; j++)
-// 		{
-// 			mlx_put_pixel(data->img2, data->map.map_width * x + j, floor_y, 0xFFB9B9B9); // Grey color
-// 		}
-//     }
-// }
 
 int32_t	main(int ac, char *av[])
 {
@@ -468,10 +432,11 @@ int32_t	main(int ac, char *av[])
 			/* Do stuff */
 			// Create and display the image.
 			cub3d_initialising(&data);
+			// printf("mini map width = %i\n", data.minimap_w);
 			data.img = mlx_new_image(data.mlx, data.iwidth, data.iheight);
 			if (!data.img || (mlx_image_to_window(data.mlx, data.img, 0, 0) < 0))
 				ft_error();
-			data.img2 = mlx_new_image(data.mlx, 912, 612);
+			data.img2 = mlx_new_image(data.mlx, WIDTH - data.iwidth, HEIGHT);
 			if (!data.img2 || (mlx_image_to_window(data.mlx, data.img2, data.map.map_width*cell_size, 0) < 0))
 				ft_error();
 			// Even after the image is being displayed, we can still modify the buffer.

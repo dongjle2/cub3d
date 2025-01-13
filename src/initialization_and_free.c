@@ -6,7 +6,7 @@
 /*   By: hipham <hipham@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/06 22:54:20 by hipham            #+#    #+#             */
-/*   Updated: 2025/01/09 21:38:12 by hipham           ###   ########.fr       */
+/*   Updated: 2025/01/13 20:58:17 by hipham           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,15 +28,6 @@ void map_initialising(t_user_map *map)
 	map->player_count = 0;
 }
 
-// void player_initilising(t_player *player)
-// {
-// 	player->angle = 0;
-// 	player->dx = 0;
-// 	player->dy = 0;
-// 	player->x = 0;
-// 	player->y = 0;
-// }
-
 void ft_free_map(t_user_map map)
 {
 	if (map.map_data != NULL)
@@ -57,6 +48,7 @@ void ft_free_map(t_user_map map)
 
 void cub3d_initialising(t_cub3d *data)
 {
+	data->minimap_w = WIDTH * 20 / 100;
 	data->iheight = data->map.map_height * cell_size;
 	data->iwidth = data->map.map_width * cell_size;
 	data->pos.dx = data->map.pos.dx;

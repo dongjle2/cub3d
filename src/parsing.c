@@ -6,7 +6,7 @@
 /*   By: hipham <hipham@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 21:46:15 by hipham            #+#    #+#             */
-/*   Updated: 2025/01/10 00:46:51 by hipham           ###   ########.fr       */
+/*   Updated: 2025/01/10 22:37:51 by hipham           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,5 +148,6 @@ bool parsed_map(char *map_path, t_cub3d *data)
 	}
 	else
 		return(0);
+	
 	return(1);
 }

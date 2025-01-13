@@ -14,7 +14,7 @@
 
 #define WIDTH 1280
 #define HEIGHT 640
-#define cell_size 32
+#define cell_size 16
 
 //initialization.c
 void map_initialising(t_user_map *map);
@@ -31,10 +31,10 @@ bool validate_color_values(int *color);
 //parsing.c
 bool parsed_map(char *map_path, t_cub3d *data);
 
-
 //cub3D_utils.c
 int error_sms(char *s, int ret);
 void ft_malloc(void **data, size_t size);
+int get_rgba(int r, int g, int b, int a);
 
 //parsing_utils.c
 bool check_for_wall(char *line);
