@@ -14,13 +14,14 @@
 
 #define WIDTH 1280
 #define HEIGHT 640
-#define cell_size 16
+// #define cell_size 16
+#define MINIMAP_SCALE 20
 
 //initialization.c
-void map_initialising(t_user_map *map);
-void player_initilising(t_player *player);
+void map3d_initialising(t_user_map *map);
 void cub3d_initialising(t_cub3d *data);
 void ft_free_map(t_user_map map);
+void minimap_initilising(t_minimap *minimap, t_user_map *map3d);
 
 //validation.c
 bool validate_map(t_user_map *map);

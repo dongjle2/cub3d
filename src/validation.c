@@ -6,7 +6,7 @@
 /*   By: hipham <hipham@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/06 23:00:50 by hipham            #+#    #+#             */
-/*   Updated: 2025/01/10 22:40:57 by hipham           ###   ########.fr       */
+/*   Updated: 2025/01/13 21:38:33 by hipham           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,11 +36,11 @@ bool validate_maze(char **maze, t_user_map *map)
 	i = 0;
 	while(maze[i] != NULL)
 		i++;
-	map->map_height = i;
+	map->num_tiles_y = i;
 	if (!check_for_wall(maze[0]) || !check_for_wall(maze[i - 1]))
 		return (printf("Maze is not closed\n"), 0);
 	i = -1;
-	while (++i < map->map_height)
+	while (++i < map->num_tiles_y)
 	{
 		last_1 = ft_strrchr(maze[i], '1');
 		last_1++;
@@ -51,7 +51,7 @@ bool validate_maze(char **maze, t_user_map *map)
 	}
 	if (map->player_count != 1)
 		return (0);
-	map->map_width = longest_line;	
+	map->num_tiles_x = longest_line;	
 	return (1);	
 }
 

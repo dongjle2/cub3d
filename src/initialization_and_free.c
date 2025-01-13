@@ -6,16 +6,16 @@
 /*   By: hipham <hipham@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/06 22:54:20 by hipham            #+#    #+#             */
-/*   Updated: 2025/01/13 20:58:17 by hipham           ###   ########.fr       */
+/*   Updated: 2025/01/13 22:21:06 by hipham           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/cub3D.h"
 
-void map_initialising(t_user_map *map)
+void map3d_initialising(t_user_map *map)
 {
-	map->map_width = 0;
-	map->map_height = 0;
+	map->num_tiles_x = 0;
+	map->num_tiles_y = 0;
 	map->pw = 0;
 	map->ph = 0;
 	map->map_data = NULL;
@@ -46,16 +46,24 @@ void ft_free_map(t_user_map map)
 		free(map.ceiling);
 }
 
+void minimap_initilising(t_minimap *minimap, t_user_map *map3d)
+{
+	minimap->w = WIDTH * MINIMAP_SCALE / 100;
+	minimap->tile_size = minimap->w / map3d->num_tiles_x; 
+	minimap->h = map3d->num_tiles_y * minimap->tile_size;
+	minimap->tile_w = minimap->w / map3d->num_tiles_x;
+	minimap->tile_h = minimap->h / map3d->num_tiles_y;
+}
+
 void cub3d_initialising(t_cub3d *data)
 {
-	data->minimap_w = WIDTH * 20 / 100;
-	data->iheight = data->map.map_height * cell_size;
-	data->iwidth = data->map.map_width * cell_size;
+	// data->iheight = data->map.num_tiles_y * cell_size;
+	// data->iwidth = data->map.num_tiles_x * cell_size;
 	data->pos.dx = data->map.pos.dx;
 	data->pos.dy = data->map.pos.dy;
-	data->map.pw = data->iwidth / data->map.map_width;
-	data->map.ph = data->iheight / data->map.map_height;
-	data->pos.x = data->map.pos.x * data->map.pw + data->map.pw / 2.0;
-	data->pos.y = data->map.pos.y * data->map.ph + data->map.ph / 2.0;
+	// data->map.pw = data->iwidth / data->map.num_tiles_x;
+	// data->map.ph = data->iheight / data->map.num_tiles_y;
+	data->pos.x = data->map.pos.x * data->minimap.tile_w + data->minimap.tile_w / 2.0;
+	data->pos.y = data->map.pos.y * data->minimap.tile_h + data->minimap.tile_h / 2.0;
 	data->pos.angle = 0;
 }

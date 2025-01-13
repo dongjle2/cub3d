@@ -13,8 +13,8 @@ typedef struct s_player
 
 typedef struct s_user_map
 {
-	int				map_width;
-	int				map_height;
+	int				num_tiles_x;
+	int				num_tiles_y;
 	float			pw; //(pixel_width = scale_factor_x)
 	float			ph; //(pixel_height = scale_factor_y)
 	char			*NO_texture;
@@ -28,10 +28,19 @@ typedef struct s_user_map
 	t_player		pos;
 }					t_user_map;
 
+typedef struct s_minimap
+{
+	uint32_t		w;
+	uint32_t		h;
+	uint32_t	tile_w;
+	uint32_t	tile_h;
+	int			tile_size;
+}				t_minimap;
+
+
 typedef struct s_cub3d
-{ 
-	uint32_t		minimap_w;
-	int				cell_size;
+{
+	t_minimap		minimap;
 	uint32_t		iwidth;
 	uint32_t		iheight;
 	mlx_t			*mlx;
