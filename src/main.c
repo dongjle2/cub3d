@@ -1,21 +1,20 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <string.h>
-#include <math.h>
-#include "../includes/cub3D.h"
 #include "../MLX/include/MLX42/MLX42.h"
 #include "../MLX/include/MLX42/MLX42_Int.h"
+#include "../includes/cub3D.h"
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 
-// #define cell_size 8
-
-void	rotate(t_cub3d *data, int unit_degree);
-void	put_pixel_box(t_cub3d *data, u_int32_t color);
-void	cast_ray(void *param);
-void	draw_wall_slice(t_cub3d *data, int x, double distance_to_wall, int ca, int color);
+void		rotate(t_cub3d *data, int unit_degree);
+void		put_pixel_box(t_cub3d *data, u_int32_t color);
+void		cast_ray(void *param);
+void		draw_wall_slice(t_cub3d *data, int x, double distance_to_wall,
+				int ca, int color);
 
 // Exit the program as failure.
-static void ft_error(void)
+static void	ft_error(void)
 {
 	fprintf(stderr, "%s", mlx_strerror(mlx_errno));
 	exit(EXIT_FAILURE);
@@ -26,16 +25,22 @@ float	deg2rad(int a)
 	return (a * M_PI / 180.0);
 }
 
-float rad2deg(float rad) 
+float	rad2deg(float rad)
 {
-    return rad * (180.0 / M_PI);
+	return (rad * (180.0 / M_PI));
 }
 
 int	wall_collision(t_cub3d *data, int dir)
 {
-	int	x_offset;
-	int	y_offset;
-	int	cnt;
+	int		x_offset;
+	int		y_offset;
+	int		cnt;
+	int		ipx;
+	int		ipy;
+	int		ipx_add_xo;
+	int		ipy_add_yo;
+	char	c;
+	char	a;
 
 	cnt = 0;
 	if (0 < data->pos.dx)
@@ -46,23 +51,23 @@ int	wall_collision(t_cub3d *data, int dir)
 		y_offset = 10;
 	else
 		y_offset = -10;
-		
-	int ipx = data->pos.x / data->minimap.tile_w;
-	int ipy = data->pos.y / data->minimap.tile_h;
-	int ipx_add_xo = (data->pos.x + x_offset) / data->minimap.tile_w;
-	int ipy_add_yo = (data->pos.y + y_offset) / data->minimap.tile_h;
+	ipx = data->pos.x / data->minimap.tile_w;
+	ipy = data->pos.y / data->minimap.tile_h;
+	ipx_add_xo = (data->pos.x + x_offset) / data->minimap.tile_w;
+	ipy_add_yo = (data->pos.y + y_offset) / data->minimap.tile_h;
 	// int ipx_sub_xo = (data->pos.x - x_offset) / data->map.scale_factor_x;
 	// int ipy_sub_yo = (data->pos.y - y_offset) / data->map.scale_factor_y;
-	if (dir == 1)	//W
+	if (dir == 1) //W
 	{
-		printf("%u, %u, %f, %f\n", data->pos.x, data->pos.y, data->pos.dx, data->pos.dy);
-		char c = data->map.map_data[ipy][ipx_add_xo];
+		printf("%u, %u, %f, %f\n", data->pos.x, data->pos.y, data->pos.dx,
+				data->pos.dy);
+		c = data->map.map_data[ipy][ipx_add_xo];
 		if (c == '0' || ft_strchr("NSWE", c))
 		{
 			data->pos.x += data->pos.dx * 4;
 			cnt++;
 		}
-		char a = data->map.map_data[ipy_add_yo][ipx];
+		a = data->map.map_data[ipy_add_yo][ipx];
 		if (a == '0' || ft_strchr("NSWE", a))
 		{
 			data->pos.y += data->pos.dy * 4;
@@ -72,11 +77,10 @@ int	wall_collision(t_cub3d *data, int dir)
 		if (cnt <= 1)
 			printf("collision\n");
 	}
-	
 	return (0);
 }
 
-void move_forward(t_cub3d *data, int dir)
+void	move_forward(t_cub3d *data, int dir)
 {
 	data->pos.angle = rad2deg(atan2(-data->pos.dy, data->pos.dx));
 	if (wall_collision(data, dir))
@@ -96,42 +100,48 @@ void move_forward(t_cub3d *data, int dir)
 	}
 }
 
-void my_keyhook(mlx_key_data_t keydata, void* param)
+void	my_keyhook(mlx_key_data_t keydata, void *param)
 {
-	t_cub3d	*data = param;
-	mlx_t* mlx = data->mlx;
-	(void) keydata;
-	int	key_pressed;
+	t_cub3d	*data;
+	mlx_t	*mlx;
+	int		key_pressed;
 
+	data = param;
+	mlx = data->mlx;
+	(void)keydata;
 	key_pressed = false;
 	if (mlx_is_key_down(mlx, MLX_KEY_ESCAPE))
 		mlx_close_window(mlx);
 	if (mlx_is_key_down(mlx, MLX_KEY_W))
 	{
-		memset(data->img2->pixels, 255, data->img2->width * data->img2->height * sizeof(int32_t));
+		memset(data->img2->pixels, 255, data->img2->width * data->img2->height
+				* sizeof(int32_t));
 		put_pixel_box(data, 0xFFFFFFFF);
 		move_forward(data, 1);
 		key_pressed = true;
 	}
 	if (mlx_is_key_down(mlx, MLX_KEY_S))
 	{
-		memset(data->img2->pixels, 255, data->img2->width * data->img2->height * sizeof(int32_t));
+		memset(data->img2->pixels, 255, data->img2->width * data->img2->height
+				* sizeof(int32_t));
 		put_pixel_box(data, 0xFFFFFFFF);
 		move_forward(data, -1);
 		key_pressed = true;
 	}
 	if (mlx_is_key_down(mlx, MLX_KEY_A))
 	{
-		memset(data->img2->pixels, 255, data->img2->width * data->img2->height * sizeof(int32_t));
+		memset(data->img2->pixels, 255, data->img2->width * data->img2->height
+				* sizeof(int32_t));
 		put_pixel_box(data, 0xFFFFFFFF);
-		rotate(data, 5);
+		rotate(data, 3.5);
 		key_pressed = true;
 	}
 	if (mlx_is_key_down(mlx, MLX_KEY_D))
 	{
-		memset(data->img2->pixels, 255, data->img2->width * data->img2->height * sizeof(int32_t));
+		memset(data->img2->pixels, 255, data->img2->width * data->img2->height
+				* sizeof(int32_t));
 		put_pixel_box(data, 0xFFFFFFFF);
-		rotate(data, -5);
+		rotate(data, -3.5);
 		key_pressed = true;
 	}
 	// 	if (x, y in range)
@@ -149,7 +159,7 @@ int	adjust_angle(int angle)
 	return (angle);
 }
 
-void rotate(t_cub3d *data, int unit_degree)
+void	rotate(t_cub3d *data, int unit_degree)
 {
 	data->pos.angle = rad2deg(atan2(-data->pos.dy, data->pos.dx));
 	data->pos.angle += unit_degree;
@@ -160,21 +170,20 @@ void rotate(t_cub3d *data, int unit_degree)
 
 void	put_pixel_box(t_cub3d *data, u_int32_t color)
 {
-	// int scale_factor_x = data->img->width / data->map.map_width;
-    // int scale_factor_y = data->img->height / data->map.map_height;
-	const int x_margin[7] = {-3, -2, -1, 0 ,1, 2, 3};
-	const int y_margin[7] = {-3, -2, -1, 0 ,1, 2, 3};
-	size_t	i;
-	size_t	j;
-	size_t	dir;
-
+	const int	x_margin[7] = {-3, -2, -1, 0, 1, 2, 3};
+	const int	y_margin[7] = {-3, -2, -1, 0, 1, 2, 3};
+	size_t		i;
+	size_t		j;
+	size_t		dir;
+	
 	i = 0;
 	while (i < sizeof(x_margin) / sizeof(int))
 	{
-		j = 0 ;
+		j = 0;
 		while (j < sizeof(y_margin) / sizeof(int))
 		{
-			mlx_put_pixel(data->img, data->pos.x + x_margin[i], data->pos.y + y_margin[j], color);
+			mlx_put_pixel(data->img, data->pos.x + x_margin[i], data->pos.y
+					+ y_margin[j], color);
 			j++;
 		}
 		i++;
@@ -182,240 +191,292 @@ void	put_pixel_box(t_cub3d *data, u_int32_t color)
 	dir = 1;
 	while (dir < 13)
 	{
-		mlx_put_pixel(data->img, data->pos.x + data->pos.dx * dir, data->pos.y + data->pos.dy * dir, color);
+		mlx_put_pixel(data->img, data->pos.x + data->pos.dx * dir, data->pos.y
+				+ data->pos.dy * dir, color);
 		dir++;
 	}
 }
 
-void render_map(char **map, t_cub3d *data) {
-    int scale_factor_x = data->img->width / data->map.num_tiles_x;
-    int scale_factor_y = data->img->height / data->map.num_tiles_y;
-    int color;
+void	render_map(char **map, t_cub3d *data)
+{
+	int	scale_factor_x;
+	int	scale_factor_y;
+	int	color;
+	int	x_start;
+	int	y_start;
+	int	x_end;
+	int	y_end;
 
-    for (int i = 0; map[i] != NULL; i++) {
-        for (int j = 0; map[i][j] != '\0'; j++) {
-            if (map[i][j] == '1')
-                color = 0xFF0000FF; // Wall: Blue
-            else if (map[i][j] == '0' || ft_strchr("NSEW", map[i][j]))
-                color = 0xFFFFFFFF; // Space: White
-            else
-                color = 0x00000000; // Default: Black (or transparent)
-            int x_start = j * scale_factor_y + 1;
-            int y_start = i * scale_factor_x + 1;
-            int x_end = x_start + scale_factor_x - 1;
-            int y_end = y_start + scale_factor_y - 1;
-
-            for (int y = y_start; y < y_end; y++) {
-                for (int x = x_start; x < x_end; x++) {
-                    mlx_put_pixel(data->img, x, y, color);
-                }
-            }
-        }
-    }
+	scale_factor_x = data->img->width / data->map.num_tiles_x;
+	scale_factor_y = data->img->height / data->map.num_tiles_y;
+	for (int i = 0; map[i] != NULL; i++)
+	{
+		for (int j = 0; map[i][j] != '\0'; j++)
+		{
+			if (map[i][j] == '1')
+				color = 0xFF0000FF; // Wall: Blue
+			else if (map[i][j] == '0' || ft_strchr("NSEW", map[i][j]))
+				color = 0xFFFFFFFF; // Space: White
+			else
+				color = 0x00000000; // Default: Black (or transparent)
+			x_start = j * scale_factor_y + 1;
+			y_start = i * scale_factor_x + 1;
+			x_end = x_start + scale_factor_x - 1;
+			y_end = y_start + scale_factor_y - 1;
+			for (int y = y_start; y < y_end; y++)
+			{
+				for (int x = x_start; x < x_end; x++)
+				{
+					mlx_put_pixel(data->img, x, y, color);
+				}
+			}
+		}
+	}
 }
 
+void	draw_line(t_cub3d *data, float start_x, float start_y, float angle,
+		float length, int color)
+{
+	float	end_x;
+	float	end_y;
+	int		x1;
+	int		y1;
+	int		x2;
+	int		y2;
+	int		dx;
+	int		dy;
+	int		sx;
+	int		sy;
+	int		err;
+	int		e2;
 
-void draw_line(t_cub3d *data, float start_x, float start_y, float angle, float length, int color) {
-	float end_x = start_x + length * cos(deg2rad(angle));
-	float end_y = start_y + length * -sin(deg2rad(angle));
-
-	int x1 = (int)start_x;
-	int y1 = (int)start_y;
-	int x2 = (int)end_x;
-	int y2 = (int)end_y;
-
-	int dx = abs(x2 - x1);
-	int dy = abs(y2 - y1);
-	int sx = x1 < x2 ? 1 : -1;
-	int sy = y1 < y2 ? 1 : -1;
-	int err = (dx > dy ? dx : -dy) / 2;
-	int e2;
-
-	 while (1) {
-        // Boundary check to prevent invalid memory access
-        if (x1 >= 0 && x1 < (int)data->img->width && y1 >= 0 && y1 < (int)data->img->height) {
-            mlx_put_pixel(data->img, x1, y1, color);
-        }
-
-        if (x1 == x2 && y1 == y2)
-            break;
-
-        e2 = err;
-        if (e2 > -dx) {
-            err -= dy;
-            x1 += sx;
-        }
-        if (e2 < dy) {
-            err += dx;
-            y1 += sy;
-        }
-    }
+	end_x = start_x + length * cos(deg2rad(angle));
+	end_y = start_y + length * -sin(deg2rad(angle));
+	x1 = (int)start_x;
+	y1 = (int)start_y;
+	x2 = (int)end_x;
+	y2 = (int)end_y;
+	dx = abs(x2 - x1);
+	dy = abs(y2 - y1);
+	sx = x1 < x2 ? 1 : -1;
+	sy = y1 < y2 ? 1 : -1;
+	err = (dx > dy ? dx : -dy) / 2;
+	while (1)
+	{
+		// Boundary check to prevent invalid memory access
+		if (x1 >= 0 && x1 < (int)data->img->width && y1 >= 0
+			&& y1 < (int)data->img->height)
+		{
+			mlx_put_pixel(data->img, x1, y1, color);
+		}
+		if (x1 == x2 && y1 == y2)
+			break ;
+		e2 = err;
+		if (e2 > -dx)
+		{
+			err -= dy;
+			x1 += sx;
+		}
+		if (e2 < dy)
+		{
+			err += dx;
+			y1 += sy;
+		}
+	}
 }
 
-void cast_ray(void *param) {
-	t_cub3d *data = param;
-	float angle = data->pos.angle;
-	float px = data->pos.x;
-	float py = data->pos.y;
+void	cast_ray(void *param)
+{
+	t_cub3d	*data;
+	int		color;
+	float	ra;
+	int		i;
+	float	tan_ra;
+
+
+	data = param;
 	float rx, ry, xo, yo, disV, disH, disT;
 	int dof, mx, my;
-	int	color;
-	int cell_size = data->minimap.tile_size;
-
 	render_map(data->map.map_data, data);
-	float ra = adjust_angle(angle + 30);
-	// angle = adjust_angle(angle + 30);
-	int i = 0;
-	while (i++ < 60)
+	ra = adjust_angle(data->pos.angle + 30);
+	i = -1;
+	while (i++ < 63)
 	{
-		disV = 50000;
-		disH = 50000;
+		disV = 100000;
+		disH = 100000;
 		// Vertical
 		dof = 0;
-		float tan_ra = tan(deg2rad(ra));
-		if (cos(deg2rad(ra)) > 0.001) {
-			rx = (((int)px/cell_size) * cell_size) + cell_size;
-			ry = (px-rx) * tan_ra + py;
-			xo = cell_size;
+		tan_ra = tan(deg2rad(ra));
+		if (cos(deg2rad(ra)) > 0.001)
+		{
+			rx = (((int)data->pos.x / data->minimap.tile_size) * data->minimap.tile_size) + data->minimap.tile_size;
+			ry = (data->pos.x - rx) * tan_ra + data->pos.y;
+			xo = data->minimap.tile_size;
 			yo = -xo * tan_ra;
 		}
-		else if (cos(deg2rad(ra)) < -0.001) {
-			rx = (((int)px/cell_size) * cell_size) - 0.0001;
-			ry = (px-rx) * tan_ra + py;
-			xo = -cell_size;
+		else if (cos(deg2rad(ra)) < -0.001)
+		{
+			rx = (((int)data->pos.x / data->minimap.tile_size) * data->minimap.tile_size) - 0.0001;
+			ry = (data->pos.x - rx) * tan_ra + data->pos.y;
+			xo = -data->minimap.tile_size;
 			yo = -xo * tan_ra;
 		}
-		else {
-			rx = px;
-			ry = py;
-			dof = 8;
+		else
+		{
+			rx = data->pos.x;
+			ry = data->pos.y;
+			dof = data->map.num_tiles_x;
 		}
-
-		while (dof < 8) {
-			mx = (int)(rx/cell_size);
-			my = (int)(ry/cell_size);
+		while (dof < data->map.num_tiles_x)
+		{
+			mx = (int)(rx / data->minimap.tile_size);
+			my = (int)(ry / data->minimap.tile_size);
 			// int mp = my * data->map.map_width + mx;
-			if (mx >= 0 && my >= 0 && mx < data->map.num_tiles_x && my < data->map.num_tiles_y && 
-				data->map.map_data[my][mx] == '1') {
-				dof = 8;
-				disV = sqrt(pow(rx - px, 2) + pow(ry - py, 2));	//
+			if (mx >= 0 && my >= 0 && mx < data->map.num_tiles_x
+				&& my < data->map.num_tiles_y &&
+				data->map.map_data[my][mx] == '1')
+			{
+				dof = data->map.num_tiles_x;
+				disV = pow(rx - data->pos.x, 2) + pow(ry - data->pos.y, 2); //
 			}
-			else {
+			else
+			{
 				rx += xo;
 				ry += yo;
 				dof += 1;
 			}
 		}
-		float vx = rx, vy = ry;
-
+		float vx = rx;
+		float vy = ry;
 		// Horizontal
 		dof = 0;
-		tan_ra = 1.0/tan_ra;
-		if (sin(deg2rad(ra)) > 0.001) {
-			ry = (((int)py/cell_size) * cell_size) - 0.0001;
-			rx = (py-ry) * tan_ra + px;
-			yo = -cell_size;
+		tan_ra = 1.0 / tan_ra;
+		if (sin(deg2rad(ra)) > 0.001)
+		{
+			ry = (((int)data->pos.y / data->minimap.tile_size) * data->minimap.tile_size) - 0.0001;
+			rx = (data->pos.y - ry) * tan_ra + data->pos.x;
+			yo = -data->minimap.tile_size;
 			xo = -yo * tan_ra;
 		}
-		else if (sin(deg2rad(ra)) < -0.001) {
-			ry = (((int)py/cell_size) * cell_size) + cell_size;
-			rx = (py-ry) * tan_ra + px;
-			yo = cell_size;
+		else if (sin(deg2rad(ra)) < -0.001)
+		{
+			ry = (((int)data->pos.y / data->minimap.tile_size) * data->minimap.tile_size) + data->minimap.tile_size;
+			rx = (data->pos.y - ry) * tan_ra + data->pos.x;
+			yo = data->minimap.tile_size;
 			xo = -yo * tan_ra;
 		}
-		else {
-			rx = px;
-			ry = py;
-			dof = 8;
+		else
+		{
+			rx = data->pos.x;
+			ry = data->pos.y;
+			dof = data->map.num_tiles_x;
 		}
-
-		while (dof < 8) {
-			mx = (int)(rx/cell_size);
-			my = (int)(ry/cell_size);
+		while (dof < data->map.num_tiles_x)
+		{
+			mx = (int)(rx / data->minimap.tile_size);
+			my = (int)(ry / data->minimap.tile_size);
 			// int mp = my * data->map.map_width + mx;
-			if (mx >= 0 && my >= 0 && mx < data->map.num_tiles_x && my < data->map.num_tiles_y && 
-				data->map.map_data[my][mx] == '1') {
-				dof = 8;
-				disH = sqrt(pow(rx - px, 2) + pow(ry - py, 2));	//
+			if (mx >= 0 && my >= 0 && mx < data->map.num_tiles_x
+				&& my < data->map.num_tiles_y &&
+				data->map.map_data[my][mx] == '1')
+			{
+				dof = data->map.num_tiles_x;
+				disH = pow(rx - data->pos.x, 2) + pow(ry - data->pos.y, 2); //
 			}
-			else {
+			else
+			{
 				rx += xo;
 				ry += yo;
 				dof += 1;
 			}
 		}
-
 		// Use closest intersection
-		if (disV < disH) {
+		if (disV < disH)
+		{
 			rx = vx;
 			ry = vy;
-			disT = disV;
+			disT = sqrt(disV);
 			color = 1;
 		}
 		else
 		{
-			disT = disH;
+			disT = sqrt(disH);
 			color = 0;
 		}
-		// printf("Closest intersection at (%f, %f) with distance %f\n", rx, ry, disT);
-		// Draw the ray line from player position to hit point
-		// float ray_length = sqrt(pow(rx - px, 2) + pow(ry - py, 2));
-		draw_line(data, px, py, ra, disT, 0x00FF00FF);
-		draw_wall_slice(data, i, disT, adjust_angle(angle-ra), color);
-		// draw_wall_slice(data, i, disT, adjust_angle(ra - angle));
+		draw_line(data, data->pos.x, data->pos.y, ra, disT, 0x00FF00FF);
+		draw_wall_slice(data, i, disT, adjust_angle(data->pos.angle - ra), color);
 		ra = adjust_angle(ra - 1);
 	}
 }
 
-void draw_wall_slice(t_cub3d *data, int x, double distance_to_wall, int ca, int color) 
-{    
-	if (!data->img2) {
-		printf("Error: img2 is NULL\n");
-		return;
+uint32_t	get_rgb_color(t_user_map map, char c, int color)
+{
+	if (c == 'C')
+		return (get_rgba(map.ceiling[0], map.ceiling[1], map.ceiling[2], 255));
+	if (c == 'F')
+		return (get_rgba(map.floor[0], map.floor[1], map.floor[2], 60));
+	if (c == 'W')
+		return ((color == 0) ? 0x00FF00FF * 0.8 : 0x00FF00FF);
+	return (0);
+}
+
+void	put_x_pixel_loop(int x, int y, t_cub3d *data, int color, char c)
+{
+	uint32_t	step;
+	uint32_t	start_x;
+	size_t		j;
+	uint32_t	px;
+
+	step = (data->img2->width / 60.0);
+	start_x = step * x;
+	j = 0;
+	while (j < step)
+	{
+		px = start_x + j;
+		if (px < data->img2->width)
+		{
+			mlx_put_pixel(data->img2, px, y, get_rgb_color(data->map, c,
+						color));
+		}
+		j++;
 	}
-    // Correct distance for fish-eye effect
-    distance_to_wall *= cos(deg2rad(ca));
-    // Calculate wall height
-    int wall_height = (int)(6000 / distance_to_wall);
-    // Determine wall slice bounds
-    int line_top = (HEIGHT / 2) - (wall_height / 2);
-    int line_bottom = (HEIGHT / 2) + (wall_height / 2);
-    // Clip bounds to screen
-    if (line_top < 0) line_top = 0;
-    if (line_bottom >= HEIGHT) line_bottom = HEIGHT - 1;
-    // Define colors for the ceiling and floor
-    uint32_t ceiling_color = get_rgba(data->map.ceiling[0],data->map.ceiling[1], data->map.ceiling[2], 255);
-    uint32_t floor_color = get_rgba(data->map.floor[0],data->map.floor[1], data->map.floor[2], 80);
-    uint32_t wall_color = (color == 0) ? 0x00FF00FF * 0.6 : 0x00FF00FF; // Red or green wall
-    // Draw wall
-	for (float y = line_top; y <= line_bottom; y++) 
-	{
-		for (float j = 0; j <= 16.5; j++)
-		{
-			mlx_put_pixel(data->img2, 16.5 * x + j, y, wall_color);
-		}
-    }
-    // Draw ceiling
-    for (float y = 1; y < line_top; y++) 
-	{
-		for (float j = 0; j <= 16.5; j++)
-		{
-    	    mlx_put_pixel(data->img2, 16.5 * x + j, y, ceiling_color);
-		}
-    }
-    // Draw floor
-    for (float y = line_bottom; y < HEIGHT; y++) 
-	{
-        for (float j = 0; j <= 16.5; j++)
-		{
-    	    mlx_put_pixel(data->img2, 16.5 * x + j, y, floor_color);
-		}
-    }
+}
+
+void	draw_wall_slice(t_cub3d *data, int x, double distance_to_wall, int ca,
+		int color)
+{
+	int	wall_height;
+	int	line_top;
+	int	line_bottom;
+
+	if (!data->img2)
+		return ;
+	// Correct distance for fish-eye effect
+	distance_to_wall *= cos(deg2rad(ca));
+	// Calculate wall height
+	wall_height = (int)(6000 / distance_to_wall);
+	// Determine wall slice bounds
+	line_top = (HEIGHT / 2) - (wall_height / 2);
+	line_bottom = (HEIGHT / 2) + (wall_height / 2);
+	// Clip bounds to screen
+	if (line_top < 0)
+		line_top = 0;
+	if (line_bottom >= HEIGHT)
+		line_bottom = HEIGHT - 1;
+	// Draw wall
+	for (int y = line_top; y <= line_bottom; y++)
+		put_x_pixel_loop(x, y, data, color, 'W');
+	// Draw ceiling
+	for (int y = 0; y < line_top; y++)
+		put_x_pixel_loop(x, y, data, color, 'C');
+	// Draw floor
+	for (int y = line_bottom; y < HEIGHT; y++)
+		put_x_pixel_loop(x, y, data, color, 'F');
 }
 
 int32_t	main(int ac, char *av[])
 {
-	char *path;
+	char	*path;
 	t_cub3d	data;
 
 	if (ac == 2)
@@ -424,7 +485,8 @@ int32_t	main(int ac, char *av[])
 		map3d_initialising(&data.map);
 		if (parsed_map(path, &data))
 		{
-			printf("nbr. of y tiles = %i, nbr. of y tiles = %i\n", data.map.num_tiles_x, data.map.num_tiles_y);
+			printf("nbr. of y tiles = %i, nbr. of y tiles = %i\n",
+					data.map.num_tiles_x, data.map.num_tiles_y);
 			// MLX allows you to define its core behaviour before startup.
 			// mlx_set_setting(MLX_MAXIMIZED, true);
 			data.mlx = mlx_init(WIDTH, HEIGHT, "42Balls", true);
@@ -432,18 +494,16 @@ int32_t	main(int ac, char *av[])
 				ft_error();
 			/* Do stuff */
 			// Create and display the image.
-			minimap_initilising(&data.minimap, &data.map);
-			printf("w = %i\n", data.minimap.w);
-			printf("h = %i\n", data.minimap.h);
-			printf("tile_w = %i\n", data.minimap.tile_w);
-			printf("tile_h = %i\n", data.minimap.tile_h);
+			minimap_initilising(&data);
 			cub3d_initialising(&data);
 			// printf("mini map width = %i\n", data.minimap_w);
 			data.img = mlx_new_image(data.mlx, data.minimap.w, data.minimap.h);
-			if (!data.img || (mlx_image_to_window(data.mlx, data.img, 0, 0) < 0))
+			if (!data.img || (mlx_image_to_window(data.mlx, data.img, 0,
+						0) < 0))
 				ft_error();
 			data.img2 = mlx_new_image(data.mlx, WIDTH - data.minimap.w, HEIGHT);
-			if (!data.img2 || (mlx_image_to_window(data.mlx, data.img2, data.map.num_tiles_x*data.minimap.tile_size, 0) < 0))
+			if (!data.img2 || (mlx_image_to_window(data.mlx, data.img2,
+						data.map.num_tiles_x * data.minimap.tile_size, 0) < 0))
 				ft_error();
 			// Even after the image is being displayed, we can still modify the buffer.
 			render_map(data.map.map_data, &data);

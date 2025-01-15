@@ -15,13 +15,14 @@
 #define WIDTH 1280
 #define HEIGHT 640
 // #define cell_size 16
-#define MINIMAP_SCALE 20
+#define MINIMAP_SCALE 30
 
 //initialization.c
 void map3d_initialising(t_user_map *map);
 void cub3d_initialising(t_cub3d *data);
 void ft_free_map(t_user_map map);
-void minimap_initilising(t_minimap *minimap, t_user_map *map3d);
+// void minimap_initilising(t_minimap *minimap, t_user_map *map3d);
+void minimap_initilising(t_cub3d *data);
 
 //validation.c
 bool validate_map(t_user_map *map);
@@ -44,4 +45,4 @@ void parse_player_dir(int dx, int dy, t_user_map *map);
 void convert_to_data(t_user_map *map, char *join);
 void save_texture(char **dir, char *path);
 
-#endif
+#endif 

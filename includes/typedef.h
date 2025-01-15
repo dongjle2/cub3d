@@ -41,8 +41,8 @@ typedef struct s_minimap
 typedef struct s_cub3d
 {
 	t_minimap		minimap;
-	uint32_t		iwidth;
-	uint32_t		iheight;
+	// uint32_t		iwidth;
+	// uint32_t		iheight;
 	mlx_t			*mlx;
 	mlx_image_t		*img;
 	mlx_image_t		*img2;
@@ -50,5 +50,12 @@ typedef struct s_cub3d
 	t_user_map		map;
 	int				key_pressed;
 }					t_cub3d;
+
+typedef struct s_ray
+{
+	float rx;
+	float ry;
+	
+}	t_ray;
 
 #endif

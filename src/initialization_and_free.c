@@ -6,7 +6,7 @@
 /*   By: hipham <hipham@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/06 22:54:20 by hipham            #+#    #+#             */
-/*   Updated: 2025/01/13 22:21:06 by hipham           ###   ########.fr       */
+/*   Updated: 2025/01/15 00:20:11 by hipham           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,13 +46,16 @@ void ft_free_map(t_user_map map)
 		free(map.ceiling);
 }
 
-void minimap_initilising(t_minimap *minimap, t_user_map *map3d)
+void minimap_initilising(t_cub3d *data)
 {
-	minimap->w = WIDTH * MINIMAP_SCALE / 100;
-	minimap->tile_size = minimap->w / map3d->num_tiles_x; 
-	minimap->h = map3d->num_tiles_y * minimap->tile_size;
-	minimap->tile_w = minimap->w / map3d->num_tiles_x;
-	minimap->tile_h = minimap->h / map3d->num_tiles_y;
+	t_minimap minimap;
+
+	minimap.w = WIDTH * MINIMAP_SCALE / 100;
+	minimap.tile_size = minimap.w / data->map.num_tiles_x; 
+	minimap.h = data->map.num_tiles_y * minimap.tile_size;
+	minimap.tile_w = minimap.w / data->map.num_tiles_x;
+	minimap.tile_h = minimap.h / data->map.num_tiles_y;
+	data->minimap = minimap;
 }
 
 void cub3d_initialising(t_cub3d *data)
