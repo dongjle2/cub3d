@@ -420,17 +420,17 @@ mlx_texture_t	*get_texture(t_cub3d *data, int side)
 {
 	printf("Side = %i, Ray angle: %f\n", side, data->pos.ra);
 
-	data->pos.ra = adjust_angle(data->pos.ra);
+	// data->pos.ra = adjust_angle(dataaaaa->pos.ra);
 	if (side == 0) 
 	{
-        if (data->pos.ra > (M_PI / 2) && data->pos.ra < (3 * (M_PI / 2))) 
+        if (data->pos.ray_dirY > 0 && data->pos.ray_dirX < M_PI) 
 			return(data->texture[1]); // east
 		else
 			return(data->texture[0]); //west
     } 
 	else
 	{
-        if (data->pos.ra > 0 && data->pos.ra < M_PI) //south
+        if (data->pos.ray_dirX > 0 && data->pos.ray_dirX < M_PI) //south
 			return(data->texture[3]);	 
 		else // North
 			return(data->texture[2]);	 
