@@ -1,0 +1,24 @@
+Theoretical Steps:
+Calculate the View Direction (player's angle):
+
+(cos(player_angle), sin(player_angle)) gives the player's forward direction.
+Calculate the Camera Plane (perpendicular to view direction):
+
+camera_plane_x = -sin(player_angle) * some_factor
+camera_plane_y = cos(player_angle) * some_factor
+some_factor is a constant that controls the field of view (FOV). A larger factor gives a wider view.
+For Each Ray (for each pixel on the screen):
+
+Calculate the ray's direction by combining the player's view direction and the camera plane’s offset for that pixel:
+ray_dir_x = view_dir_x + camera_plane_x * (2 * x / screen_width - 1)
+ray_dir_y = view_dir_y + camera_plane_y * (2 * x / screen_width - 1)
+This gives the ray a direction that simulates the player's perspective, with rays at the center being closest to the forward direction and rays at the edges spreading out.
+Cast the Ray:
+
+Use your existing raycasting logic to find where each ray intersects a wall. This will be done using your vertical and horizontal raycasting checks.
+You may need to adjust your raycasting logic slightly to accommodate the new ray direction.
+Draw the Wall Slice:
+
+Once the intersection is found, calculate the wall height based on the distance to the wall.
+Map the texture coordinates based on the wall's intersection point and distance to avoid texture distortion.
+Draw the texture slice vertically to match the calculated height of the wall slice.

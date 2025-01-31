@@ -6,17 +6,28 @@ typedef struct s_player
 {
 	unsigned int	x;
 	unsigned int	y;
-	float			dx;
-	float			dy;
-	float			angle;
+	double			dx;
+	double			dy;
+	double			angle;
+
+	//implement camera_plane
+	double			view_dirX;
+	double			view_dirY;
+	double			cam_planeX;
+	double			cam_planeY;
+	double			ray_dirX;
+	double			ray_dirY;
+	double			ray_offset_x;
+	double			ray_offset_y;
+	double			ra;
 }					t_player;
 
 typedef struct s_user_map
 {
 	int				map_width;
 	int				map_height;
-	float			pw; //(pixel_width = scale_factor_x)
-	float			ph; //(pixel_height = scale_factor_y)
+	double			pw; //(pixel_width = scale_factor_x)
+	double			ph; //(pixel_height = scale_factor_y)
 	char			*NO_texture;
 	char			*SO_texture;
 	char			*WE_texture;

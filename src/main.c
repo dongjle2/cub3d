@@ -13,7 +13,7 @@
 void	rotate(t_cub3d *data, int unit_degree);
 void	put_pixel_box(t_cub3d *data, u_int32_t color);
 void	cast_ray(void *param);
-void	draw_wall_slice(t_cub3d *data, int x, double distance_to_wall, int color, int rx, int ry);
+void	draw_wall_slice(t_cub3d *data, int x, double distance_to_wall, int side, double rx, double ry);
 
 // void map_initialising(t_user_map *map)
 // {
@@ -38,12 +38,12 @@ static void ft_error(void)
 	exit(EXIT_FAILURE);
 }
 
-float	deg2rad(int a)
+double	deg2rad(int a)
 {
 	return (a * M_PI / 180.0);
 }
 
-float rad2deg(float rad) 
+double rad2deg(double rad) 
 {
     return rad * (180.0 / M_PI);
 }
@@ -52,9 +52,7 @@ int	wall_collision(t_cub3d *data, int dir)
 {
 	int	x_offset;
 	int	y_offset;
-	int	cnt;
 
-	cnt = 0;
 	if (0 < data->pos.dx)
 		x_offset = 10;
 	else
@@ -157,7 +155,7 @@ void my_keyhook(mlx_key_data_t keydata, void* param)
 		cast_ray(data);
 }
 
-float	adjust_angle(float angle)
+double	adjust_angle(double angle)
 {
 	if (359 < angle)
 		angle -= 360;
@@ -232,9 +230,9 @@ void render_map(char **map, t_cub3d *data) {
 }
 
 
-void draw_line(t_cub3d *data, float start_x, float start_y, float angle, float length, int color) {
-	float end_x = start_x + length * cos(deg2rad(angle));
-	float end_y = start_y + length * -sin(deg2rad(angle));
+void draw_line(t_cub3d *data, double start_x, double start_y, double angle, double length, int color) {
+	double end_x = start_x + length * cos(deg2rad(angle));
+	double end_y = start_y + length * -sin(deg2rad(angle));
 
 	int x1 = (int)start_x;
 	int y1 = (int)start_y;
@@ -266,34 +264,35 @@ void draw_line(t_cub3d *data, float start_x, float start_y, float angle, float l
 
 void cast_ray(void *param) {
     t_cub3d *data = param;
-    float angle = data->pos.angle;
-    float FOV = 60.0;
-    float px = data->pos.x;
-    float py = data->pos.y;
+    double angle = data->pos.angle;
+    double FOV = 60.0;
+    double px = data->pos.x;
+    double py = data->pos.y;
     int num_rays = 912;
-    float ray_angle = FOV / num_rays;  // Step size between rays
-    float start_angle = angle + (FOV / 2);  // Start from leftmost ray
-    float rx, ry, xo, yo, disV, disH, disT;
-    float dof, mx, my;
+    double ray_angle = FOV / num_rays;  // Step size between rays
+    double start_angle = angle + (FOV / 2);  // Start from leftmost ray
+    double rx, ry, xo, yo, disV, disH, disT;
+    double dof, mx, my;
     int color;
 
-    float ra = start_angle;
+    data->pos.ra = start_angle;
     int i = 0;
 	render_map(data->map.map_data, data);
     while (i < num_rays) {
         disV = 1000000;
         disH = 1000000;
-        float ca = adjust_angle(ra - angle);  // Changed angle calculation
+        double ca = adjust_angle( data->pos.ra - angle);  // Changed angle calculation
 		
 		// Vertical
 		dof = 0;
-		float tan_ra = tan(deg2rad(ra));
-		if (cos(deg2rad(ra)) > 0.001) {
+		double tan_ra = tan(deg2rad(data->pos.ra));
+		data->pos.ray_dirX = cos(deg2rad(data->pos.ra));
+		if (data->pos.ray_dirX > 0.001) {
 			rx = (((int)px / cell_size) * cell_size) + cell_size;
 			ry = (px - rx) * tan_ra + py;
 			xo = cell_size;
 			yo = -xo * tan_ra;
-		} else if (cos(deg2rad(ra)) < -0.001) {
+		} else if (data->pos.ray_dirX < -0.001) {
 			rx = (((int)px / cell_size) * cell_size) - 0.001;
 			ry = (px - rx) * tan_ra + py;
 			xo = -cell_size;
@@ -319,17 +318,18 @@ void cast_ray(void *param) {
 				dof += 1;
 			}
 		}
-		float vx = rx, vy = ry;
+		double vx = rx, vy = ry;
 
 		// Horizontal
 		dof = 0;
 		tan_ra = 1.0 / tan_ra;
-		if (sin(deg2rad(ra)) > 0.001) {
+		data->pos.ray_dirY = sin(deg2rad(data->pos.ra));
+		if (data->pos.ray_dirY > 0.001) {
 			ry = (((int)py / cell_size) * cell_size) - 0.001;
 			rx = (py - ry) * tan_ra + px;
 			yo = -cell_size;
 			xo = -yo * tan_ra;
-		} else if (sin(deg2rad(ra)) < -0.001) {
+		} else if (sin(deg2rad(data->pos.ra)) < -0.001) {
 			ry = (((int)py / cell_size) * cell_size) + cell_size;
 			rx = (py - ry) * tan_ra + px;
 			yo = cell_size;
@@ -365,70 +365,127 @@ void cast_ray(void *param) {
             color = 0;
         }
 
-        float corrected_dist = disT * cos(deg2rad(ca));  // Keep fisheye correction
+        double corrected_dist = disT * cos(deg2rad(ca));  // Keep fisheye correction
 
         // Draw wall slice first, then ray line
         draw_wall_slice(data, i, corrected_dist, color, rx, ry);
-        draw_line(data, px, py, ra, disT, 0x00FF00FF);
+        draw_line(data, px, py, data->pos.ra, disT, 0x00FF00FF);
         
-        ra = adjust_angle(ra - ray_angle);  // Changed to subtract ray_angle
+        data->pos.ra = adjust_angle(data->pos.ra - ray_angle);  // Changed to subtract ray_angle
         i++;
     }
 }
 
-void draw_wall_slice(t_cub3d *data, int x, double distance_to_wall, int color, int rx, int ry) {
-    // // Select correct texture based on wall orientation
-    // if (color == 0) {
-    //     current_texture = data->texture[0];  // North/South texture
-    // } else {
-    //     current_texture = data->texture[1];  // East/West texture
-    // }
-    // int TEXTURE_HEIGHT = current_texture->height;
-    // int TEXTURE_WIDTH = current_texture->width;
+// side = 1 -> SN, side = 0 -> EW
 
-	int TEXTURE_HEIGHT = data->texture[2]->height;
-	int TEXTURE_WIDTH = data->texture[2]->width;
+// void draw_wall_slice(t_cub3d *data, int x, double distance_to_wall, int side, double rx, double ry) {
+//     printf("hit_x = %f, hit_y = %f\n", rx, ry);
+//     int TEXTURE_HEIGHT = data->texture[2]->height;
+//     int TEXTURE_WIDTH = data->texture[2]->width;
 
-    int wall_height = (int)(HEIGHT / distance_to_wall * 0.75);  // Changed wall height calculation
+//     // Calculate wall height based on distance
+//     int wall_height = (int)(((HEIGHT / 2) * cell_size) / distance_to_wall);
+//     if (wall_height > HEIGHT) wall_height = HEIGHT;
+
+//     int line_top = (HEIGHT - wall_height) / 2;
+//     int line_bottom = line_top + wall_height;
+//     double step = 1.0 * TEXTURE_HEIGHT / wall_height;
+//     double texPos = 0;  // Start from the top
+
+//     if (line_bottom >= HEIGHT) line_bottom = HEIGHT - 1;
+
+//     int texX = (side == 0) ? 
+//         (int)(rx / cell_size * TEXTURE_WIDTH) % TEXTURE_WIDTH :
+//         (int)(ry / cell_size * TEXTURE_WIDTH) % TEXTURE_WIDTH;
+//     if (texX < 0) texX += TEXTURE_WIDTH;
+
+//     for (int y = line_top; y <= line_bottom; y++) {
+//         int texY = (int)texPos % TEXTURE_HEIGHT;
+//         uint8_t *pixel = &data->texture[2]->pixels[(TEXTURE_WIDTH * texY + texX) * 4];
+//         uint32_t pixel_color = (pixel[0] << 24) | (pixel[1] << 16) | 
+//                              (pixel[2] << 8) | pixel[3];
+
+//         if (side == 0) {
+//             uint32_t r = ((pixel_color >> 24) & 0xFF);
+//             uint32_t g = ((pixel_color >> 16) & 0xFF);
+//             uint32_t b = ((pixel_color >> 8) & 0xFF);
+//             pixel_color = (r << 24) | (g << 16) | (b << 8) | 0xFF;
+//         }
+//         mlx_put_pixel(data->img2, x, y, pixel_color);
+//         texPos += step;
+//     }
+// }
+
+mlx_texture_t	*get_texture(t_cub3d *data, int side)
+{
+	printf("Side = %i, Ray angle: %f\n", side, data->pos.ra);
+
+	data->pos.ra = adjust_angle(data->pos.ra);
+	if (side == 0) 
+	{
+        if (data->pos.ra > (M_PI / 2) && data->pos.ra < (3 * (M_PI / 2))) 
+			return(data->texture[1]); // east
+		else
+			return(data->texture[0]); //west
+    } 
+	else
+	{
+        if (data->pos.ra > 0 && data->pos.ra < M_PI) //south
+			return(data->texture[3]);	 
+		else // North
+			return(data->texture[2]);	 
+    }
+}
+
+void draw_wall_slice(t_cub3d *data, int x, double distance_to_wall, int side, double rx, double ry) {
+    // printf("hit_x = %f, hit_y = %f\n", rx, ry);www
+
+    // Select the texture based on the wall side (North, South, East, West)
+    mlx_texture_t *texture = get_texture(data, side);
+
+    // Calculate wall height based on distance
+    int wall_height = (int)((HEIGHT) * cell_size / distance_to_wall);
     if (wall_height > HEIGHT) wall_height = HEIGHT;
 
+    // Calculate the top and bottom of the wall slice
     int line_top = (HEIGHT - wall_height) / 2;
     int line_bottom = line_top + wall_height;
-    double step = 1.0 * TEXTURE_HEIGHT / wall_height;
-    double texPos = 0;
+    double step = 1.0 * texture->height / wall_height;
+    double texPos = 0;  // Start from the top of the texture
 
-    // if (line_top < 0) {
-    //     texPos = -line_top * step;
-    //     line_top = 0;
-    // }
     if (line_bottom >= HEIGHT) line_bottom = HEIGHT - 1;
 
-    int texX = (color == 0) ? 
-        (int)(rx * TEXTURE_WIDTH / cell_size) % TEXTURE_WIDTH :
-        (int)(ry * TEXTURE_WIDTH / cell_size) % TEXTURE_WIDTH;
+    // Texture X coordinate calculation (based on hit location)
+    int texX = (side == 0) ? (int)(rx / cell_size * texture->width) % texture->width : 
+                             (int)(ry / cell_size * texture->width) % texture->width;
 
-    // Make sure texX is positive
-    if (texX < 0) texX += TEXTURE_WIDTH;
+    // Handle negative texX (wrap around)
+    if (texX < 0) texX += texture->width;
 
+    // Draw the wall slice using the selected texture
     for (int y = line_top; y <= line_bottom; y++) {
-        int texY = (int)texPos % TEXTURE_HEIGHT;
-        uint8_t *pixel = &data->texture[2]->pixels[(TEXTURE_WIDTH * texY + texX) * 4];
-        uint32_t pixel_color = (pixel[0] << 24) | (pixel[1] << 16) | 
-                             (pixel[2] << 8) | pixel[3];
+        int texY = (int)texPos % texture->height;
 
-        if (color == 0) {
+        // Get the pixel color from the selected texture
+        uint8_t *pixel = &texture->pixels[(texY * texture->width + texX) * 4];  // RGBA format
+        uint32_t pixel_color = (pixel[0] << 24) | (pixel[1] << 16) | (pixel[2] << 8) | pixel[3];
+
+        // Apply shading for side walls (darker effect for vertical walls)
+        if (side == 0) {
             uint32_t r = ((pixel_color >> 24) & 0xFF);
             uint32_t g = ((pixel_color >> 16) & 0xFF);
             uint32_t b = ((pixel_color >> 8) & 0xFF);
-            pixel_color = (r << 24) | (g << 16) | (b << 8) | 0xFF;
+            pixel_color = (r / 2 << 24) | (g / 2 << 16) | (b / 2 << 8) | 0xFF;  // Darken color for side walls
         }
 
-        // for (int j = 0; j < 1; j++) {
-		mlx_put_pixel(data->img2, x, y, pixel_color);
-        // }
-        texPos += step;
+        // Draw the pixel on the screen
+        mlx_put_pixel(data->img2, x, y, pixel_color);
+        texPos += step;  // Move down the texture
     }
 }
+
+
+
 
 int32_t	main(int ac, char *av[])
 {
@@ -453,9 +510,9 @@ int32_t	main(int ac, char *av[])
 			/* Do stuff */
 			// Create and display the image.
 			cub3d_initialising(&data);
-			data.texture[2] = mlx_load_png("images/texture2.png");
+			data.texture[0] = mlx_load_png(data.map.WE_texture);
 			data.texture[1] = mlx_load_png(data.map.EA_texture);
-			// data.texture[2] = mlx_load_png(data.map.WE_texture);
+			data.texture[2] = mlx_load_png(data.map.NO_texture);
 			data.texture[3] = mlx_load_png(data.map.SO_texture);
 			data.img = mlx_new_image(data.mlx, data.iwidth, data.iheight);
 			if (!data.img || (mlx_image_to_window(data.mlx, data.img, 0, 0) < 0))
@@ -464,7 +521,7 @@ int32_t	main(int ac, char *av[])
 				ft_error();
 			}
 			data.img2 = mlx_new_image(data.mlx, 912, 640);
-			if (!data.img2 || (mlx_image_to_window(data.mlx, data.img2, data.map.map_width*cell_size, 0) < 0))
+			if (!data.img2 || (mlx_image_to_window(data.mlx, data.img2, data.map.map_width*32, 0) < 0))
 				ft_error();
 			// Even after the image is being displayed, we can still modify the buffer.
 			render_map(data.map.map_data, &data);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   initialization_and_free.c                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dongjle2 <dongjle2@student.42heilbronn.    +#+  +:+       +#+        */
+/*   By: hipham <hipham@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/06 22:54:20 by hipham            #+#    #+#             */
-/*   Updated: 2025/01/11 23:00:15 by dongjle2         ###   ########.fr       */
+/*   Updated: 2025/01/31 21:19:32 by hipham           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

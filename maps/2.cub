@@ -1,7 +1,7 @@
-NO ./images/NO.png
-SO ./images/SO.png
-WE ./images/WE.png
-EA ./images/EA.png
+NO ./images/NORTH.png
+SO ./images/SOUTH.png
+WE ./images/WEST.png
+EA ./images/EAST.png
 
 F 225,200,0
 C 225,30,0
@@ -10,7 +10,7 @@ C 225,30,0
 10010011
 10010001
 11000111
-110100101
- 10110101
- 1N110011
- 1111111
+10010011
+10110101
+1N110011
+11111111
