@@ -6,7 +6,7 @@
 /*   By: hipham <hipham@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/02 01:53:22 by hipham            #+#    #+#             */
-/*   Updated: 2025/02/02 16:37:39 by hipham           ###   ########.fr       */
+/*   Updated: 2025/02/02 17:52:09 by hipham           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,9 +56,9 @@ mlx_texture_t	*get_wall_texture(t_cub3d *data, t_ray_data *ray)
 	if (ray->color == 0)
 	{
 		if (ray->dirX >= 0)
-			return (data->texture[3]); // South
-		else
 			return (data->texture[2]); // North
+		else
+			return (data->texture[3]); // South
 	}
 	else
 	{
@@ -78,7 +78,7 @@ void floor_drawing(t_cub3d *data, t_wall_data wall, int x)
 {
     uint32_t floor_color;
 
-    floor_color = get_rgba(data->map.floor[0], data->map.floor[1], data->map.floor[2], 155);
+    floor_color = get_rgba(data->map.floor[0], data->map.floor[1], data->map.floor[2], 200);
     while (wall.line_bottom < HEIGHT)
     {
         mlx_put_pixel(data->img2, x, wall.line_bottom, floor_color);
